@@ -1,4 +1,10 @@
 function setup() {
+  const recordBtn = document.querySelector('#record');
+  recordBtn.addEventListener('click',recordCoords);  
+  noCanvas();
+  const video = createCapture(VIDEO);
+  video.size(320,240);
+
   function recordCoords() {
     if(!('geolocation' in navigator)) {
       console.log('Geolocation Not Available');
@@ -21,7 +27,9 @@ function setup() {
     });
   }
   async function sendData(userName,lat,lon) {
-    const data = {lat,lon,userName};
+    video.loadPixels();
+    const image64 = video.canvas.toDataURL();
+    const data = {lat,lon,userName, image64};
     const options = {
       method:'POST',
       headers:{
@@ -32,8 +40,4 @@ function setup() {
     const response = await fetch('/api',options);
     console.log(await response.json());
   }
-  const recordBtn = document.querySelector('#record');
-  recordBtn.addEventListener('click',recordCoords);  
-  noCanvas();
-  const video = createCapture(VIDEO);
 }

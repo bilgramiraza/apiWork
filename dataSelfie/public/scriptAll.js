@@ -23,13 +23,17 @@ function createTable(data) {
     const userName = document.createElement('td');
     const lat = document.createElement('td');
     const lon = document.createElement('td');
+    const imageCol = document.createElement('td');
+    const image = document.createElement('img');
     const id = document.createElement('td');
     timeStamp.textContent = new Date(item.timeStamp).toLocaleString();
     userName.textContent = item.userName;
     lat.textContent = item.lat;
     lon.textContent = item.lon;
     id.textContent = item._id;
-    root.append(timeStamp, userName, lat, lon, id);
+    image.src = item.image;
+    imageCol.append(image);
+    root.append(timeStamp, userName, lat, lon, imageCol, id);
     
     tableRoot.append(root);
   }  

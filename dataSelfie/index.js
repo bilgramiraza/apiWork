@@ -16,6 +16,7 @@ app.post('/api',(request, response)=>{
     userName:request.body.userName,
     lat:request.body.lat,
     lon:request.body.lon,
+    image:request.body.image64,
   };
   database.insert(row);
   response.json({
@@ -24,6 +25,7 @@ app.post('/api',(request, response)=>{
     userName:request.body.userName,
     latitude:request.body.lat,
     longitude:request.body.lon,
+    image:request.body.image64,
   });
 });
 
