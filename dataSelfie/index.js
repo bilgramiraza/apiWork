@@ -10,18 +10,22 @@ const database = new Datastore('database.db');
 database.loadDatabase();
 
 app.post('/api',(request, response)=>{
-  let coords = {
-    timeStamp:Date.now(),
-    requestTimeStamp:request.body.time,
+  arrivalTime = Date.now();
+  let row = {
+    timeStamp:arrivalTime,
+    userName:request.body.userName,
     lat:request.body.lat,
-    lon:request.body.lon
+    lon:request.body.lon,
+    requestTimeStamp:request.body.time,
   };
-  database.insert(coords);
+  database.insert(row);
   response.json({
     status:'success',
+    timeStamp:arrivalTime,
+    userName:request.body.userName,
     latitude:request.body.lat,
     longitude:request.body.lon,
-    timestamp:request.body.time,
+    receivedTimeStamp:request.body.time,
   });
 });
 

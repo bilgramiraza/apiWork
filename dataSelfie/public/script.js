@@ -1,21 +1,27 @@
 function recordCoords() {
-  if('geolocation' in navigator) {
-    console.log('Geolocation Available');
-    navigator.geolocation.getCurrentPosition((position) => {
-      console.log(position);
-      const lat = document.querySelector('.lat');
-      const lon = document.querySelector('.lon');
-      lat.textContent = position.coords.latitude;
-      lon.textContent = position.coords.longitude;
-      sendData(position.timestamp,position.coords.latitude,position.coords.longitude);
-    });
-  } else {
-    /* geolocation IS NOT available */
+  if(!('geolocation' in navigator)) {
     console.log('Geolocation Not Available');
-  } 
+    return;
+  }
+  const lat = document.querySelector('.lat');
+  const lon = document.querySelector('.lon');
+  const userName = document.querySelector('input');
+  if(!userName.value){
+    alert('Please Fill All Inputs before proceding');
+    return
+  }
+  navigator.geolocation.getCurrentPosition((position) => {
+    lat.textContent = position.coords.latitude;
+    lon.textContent = position.coords.longitude;
+    sendData(position.timestamp,
+             userName.value,
+             position.coords.latitude,
+             position.coords.longitude, 
+            );
+  });
 }
-async function sendData(time,lat,lon) {
-  const data = {time,lat,lon};
+async function sendData(time,userName,lat,lon) {
+  const data = {time,lat,lon,userName};
   const options = {
     method:'POST',
     headers:{
