@@ -16,7 +16,6 @@ app.post('/api',(request, response)=>{
     userName:request.body.userName,
     lat:request.body.lat,
     lon:request.body.lon,
-    requestTimeStamp:request.body.time,
   };
   database.insert(row);
   response.json({
@@ -25,7 +24,6 @@ app.post('/api',(request, response)=>{
     userName:request.body.userName,
     latitude:request.body.lat,
     longitude:request.body.lon,
-    receivedTimeStamp:request.body.time,
   });
 });
 

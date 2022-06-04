@@ -19,11 +19,18 @@ function createTable(data) {
   for(item of data){
     console.log(item);
     const root = document.createElement('tr');
-    for(element in item){//Create Element Rows
-      const tableElement = document.createElement('td');
-      tableElement.textContent = item[element];
-      root.append(tableElement);
-    }
+    const timeStamp = document.createElement('td');
+    const userName = document.createElement('td');
+    const lat = document.createElement('td');
+    const lon = document.createElement('td');
+    const id = document.createElement('td');
+    timeStamp.textContent = new Date(item.timeStamp).toLocaleString();
+    userName.textContent = item.userName;
+    lat.textContent = item.lat;
+    lon.textContent = item.lon;
+    id.textContent = item._id;
+    root.append(timeStamp, userName, lat, lon, id);
+    
     tableRoot.append(root);
   }  
 }
