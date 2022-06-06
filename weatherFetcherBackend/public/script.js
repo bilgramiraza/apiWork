@@ -11,14 +11,10 @@ function getCoords() {
     console.log('Geolocation Not Available');
     return;
   }
-  const lat = document.querySelector('.lat');
-  const lon = document.querySelector('.lon');
   navigator.geolocation.getCurrentPosition(async (position) => {
-    lat.textContent = position.coords.latitude;
-    lon.textContent = position.coords.longitude;
-    const response = await fetch(`/weather/${position.coords.latitude},${position.coords.longitude}`);
-    const json = await response.json();
-    console.log(json);
+    const weatherResponse = await fetch(`/weather/${position.coords.latitude},${position.coords.longitude}`);
+    const weatherData = await weatherResponse.json();
+    displayData(weatherData, position);
   });
 }
 
@@ -49,4 +45,26 @@ async function sendData(caption,lat,lon) {
   };
   const response = await fetch('/api',options);
   console.log(await response.json());
+}
+
+function displayData(weatherData, position){
+  const latDOM = document.querySelector('.lat');
+  const lonDOM = document.querySelector('.lon');
+  const tempDOM = document.querySelector('.temp');
+  const tempMaxDOM = document.querySelector('.tempMax');
+  const tempMinDOM = document.querySelector('.tempMin');
+  const aqiDOM = document.querySelector('.aqi');
+  const pm2_5DOM = document.querySelector('.pm25');
+  const pm10DOM = document.querySelector('.pm10');
+  const timeStampDOM = document.querySelector('.timeStamp');
+
+  latDOM.textContent = position.coords.latitude.toFixed(2);
+  lonDOM.textContent = position.coords.longitude.toFixed(2);
+  tempDOM.textContent = weatherData.temp;
+  tempMaxDOM.textContent = weatherData.tempMax;
+  tempMinDOM.textContent = weatherData.tempMin;
+  aqiDOM.textContent=weatherData.aqi;
+  pm2_5DOM.textContent=weatherData.pm25;
+  pm10DOM.textContent=weatherData.pm10;
+  timeStampDOM.textContent=weatherData.lastUpdatedTime;
 }

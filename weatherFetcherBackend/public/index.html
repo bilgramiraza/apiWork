@@ -17,10 +17,18 @@
 
   <p>Welcome to the ultimate image storage application using the power of the cloud</p>
   <form>
+    <div>
+      Latitude: <span class="lat"></span><br>
+      Longitude: <span class="lon"></span><br>
+      Current Temperature: <span class="temp"></span>&deg;C<br>
+      Day Forecast: <span class="tempMax"></span>&deg;C / <span class="tempMin"></span>&deg;C<br>
+      The Air Quality Index: <span class="aqi"></span><br>
+      PM2.5: <span class="pm25"></span> μg/m<sup>3</sup><br>
+      PM10: <span class="pm10"></span> μg/m<sup>3</sup><br>
+      Last Updated at: <span class="timeStamp"></span><br>
+    </div>
     <label for="username">Enter A Caption:</label>
-    <input type="text" name="caption">
-    <p>Latitude: <span class="lat"></span></p>
-    <p>Longitude: <span class="lon"></span></p>
+    <input type="text" name="caption"><br>
     <button id="record" type="button">Record Location</button>
   </form>
 </body>

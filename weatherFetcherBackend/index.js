@@ -42,8 +42,35 @@ app.get('/api',(request, response)=>{
 app.get('/weather/:coords',openWeatherAPI);
 async function openWeatherAPI( request, response) {
   const [lat,lon] = request.params.coords.split(',');
-  const api_url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=`;//API key removed for safety
-  const fetch_response = await fetch(api_url);
-  const json = await fetch_response.json();
-  response.json(json);  
+  //API KEY REMOVED. Add before compiling
+  const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?units=metric&lat=${lat}&lon=${lon}&appid=${apiKey}`;
+  const aqiUrl = `http://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${apiKey}`;
+  const weatherResponse = await fetch(weatherUrl);
+  const aqiResponse = await fetch(aqiUrl);
+  const weatherData = await weatherResponse.json();
+  const aqiData = await aqiResponse.json();
+  let aqi = '';
+  switch (aqiData.list[0].main.aqi) {
+    case 1:aqi = 'Good';
+      break;
+    case 2:aqi = 'Fair';
+      break;
+    case 3:aqi = 'Moderate';
+      break;
+    case 4:aqi = 'Poor';
+      break;
+    case 5:aqi = 'Very Poor';
+      break;
+  }
+  const lastUpdatedTime =new Date(aqiData.list[0].dt*1000).toUTCString();
+  const data = {
+    temp:weatherData.main.temp,
+    tempMin:weatherData.main.temp_min,
+    tempMax:weatherData.main.temp_max,
+    lastUpdatedTime:lastUpdatedTime,
+    aqi:aqi,
+    pm25:aqiData.list[0].components.pm2_5,
+    pm10:aqiData.list[0].components.pm10,
+  };
+  response.json(data);  
 }
