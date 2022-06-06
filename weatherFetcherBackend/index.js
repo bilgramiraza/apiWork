@@ -1,5 +1,6 @@
 const express = require('express');
 const Datastore = require('nedb');
+const fetch = require('node-fetch');
 
 const app = express();
 app.listen(3000,()=>console.log('listening at port 3000'));
@@ -37,3 +38,12 @@ app.get('/api',(request, response)=>{
     response.json(data);
   });
 });
+
+app.get('/weather/:coords',openWeatherAPI);
+async function openWeatherAPI( request, response) {
+  const [lat,lon] = request.params.coords.split(',');
+  const api_url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=`;//API key removed for safety
+  const fetch_response = await fetch(api_url);
+  const json = await fetch_response.json();
+  response.json(json);  
+}

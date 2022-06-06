@@ -1,20 +1,37 @@
-const recordBtn = document.querySelector('#record');
-recordBtn.addEventListener('click',recordCoords);  
+setup();
+function setup() {
+  getCoords()
+  setInterval(getCoords, 5000);  
+  const recordBtn = document.querySelector('#record');
+  recordBtn.addEventListener('click',recordCoords);  
+}
 
-function recordCoords() {
+function getCoords() {
   if(!('geolocation' in navigator)) {
     console.log('Geolocation Not Available');
     return;
   }
   const lat = document.querySelector('.lat');
   const lon = document.querySelector('.lon');
+  navigator.geolocation.getCurrentPosition(async (position) => {
+    lat.textContent = position.coords.latitude;
+    lon.textContent = position.coords.longitude;
+    const response = await fetch(`/weather/${position.coords.latitude},${position.coords.longitude}`);
+    const json = await response.json();
+    console.log(json);
+  });
+}
+
+function recordCoords() {
+  if(!('geolocation' in navigator)) {
+    console.log('Geolocation Not Available');
+    return;
+  }
   const caption = document.querySelector('input');
   if(!caption.value){
     caption.value = '';
   }
   navigator.geolocation.getCurrentPosition((position) => {
-    lat.textContent = position.coords.latitude;
-    lon.textContent = position.coords.longitude;
     sendData(caption.value,
               position.coords.latitude,
               position.coords.longitude, 
