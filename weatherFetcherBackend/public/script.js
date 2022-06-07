@@ -64,6 +64,8 @@ function displayData(data){
 }
 
 async function sendData(data) {
+  const captionDOM = document.querySelector('.caption');
+  data.caption = captionDOM.value;
   const options = {
     method:'POST',
     headers:{
