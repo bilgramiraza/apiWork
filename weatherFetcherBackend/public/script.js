@@ -1,53 +1,47 @@
 setup();
-function setup() {
-  getCoords()
-  setInterval(getCoords, 5000);  
+async function setup() {
+  let data = await getWeatherData();//
+  displayData(data);                //Triggers on Page Load
+  setInterval(async ()=>{                 //
+    data = await getWeatherData();  //Reloads Data and Repaints DOM Every 5 seconds
+    displayData(data);
+  }, 5000);  
   const recordBtn = document.querySelector('#record');
-  recordBtn.addEventListener('click',recordCoords);  
-}
-
-function getCoords() {
-  if(!('geolocation' in navigator)) {
-    console.log('Geolocation Not Available');
-    return;
-  }
-  navigator.geolocation.getCurrentPosition(async (position) => {
-    const weatherResponse = await fetch(`/weather/${position.coords.latitude},${position.coords.longitude}`);
-    const weatherData = await weatherResponse.json();
-    displayData(weatherData, position);
+  recordBtn.addEventListener('click',()=>{
+    sendData(data);
   });
 }
 
-function recordCoords() {
-  if(!('geolocation' in navigator)) {
-    console.log('Geolocation Not Available');
-    return;
-  }
-  const caption = document.querySelector('input');
-  if(!caption.value){
-    caption.value = '';
-  }
-  navigator.geolocation.getCurrentPosition((position) => {
-    sendData(caption.value,
-              position.coords.latitude,
-              position.coords.longitude, 
-            );
+async function getCoords() {
+  let getLocationPromise = new Promise((resolve, reject)=>{   //Extracts Location coords 
+    if(navigator.geolocation){                                //for external uses
+      navigator.geolocation.getCurrentPosition((position)=>{
+        lat = position.coords.latitude
+        long = position.coords.longitude
+        resolve({latitude: lat, 
+                longitude: long});
+      });
+    }
+    else{
+      reject("your browser doesn't support geolocation");
+    }
   });
-}
-async function sendData(caption,lat,lon) {
-  const data = {lat,lon,caption};
-  const options = {
-    method:'POST',
-    headers:{
-      "Content-Type": 'application/json',
-    },
-    body:JSON.stringify(data),
-  };
-  const response = await fetch('/api',options);
-  console.log(await response.json());
+  try {
+    return await getLocationPromise;    
+  } catch (error) {
+    alert(error);
+    return {latitude: null, longitude: null};
+  }
 }
 
-function displayData(weatherData, position){
+async function getWeatherData() {
+  const position = await getCoords();
+  const weatherResponse = await fetch(`/weather/${position.latitude},${position.longitude}`);
+  const weatherData = await weatherResponse.json();
+  return {...weatherData, ...position};
+}
+
+function displayData(data){
   const latDOM = document.querySelector('.lat');
   const lonDOM = document.querySelector('.lon');
   const tempDOM = document.querySelector('.temp');
@@ -58,13 +52,25 @@ function displayData(weatherData, position){
   const pm10DOM = document.querySelector('.pm10');
   const timeStampDOM = document.querySelector('.timeStamp');
 
-  latDOM.textContent = position.coords.latitude.toFixed(2);
-  lonDOM.textContent = position.coords.longitude.toFixed(2);
-  tempDOM.textContent = weatherData.temp;
-  tempMaxDOM.textContent = weatherData.tempMax;
-  tempMinDOM.textContent = weatherData.tempMin;
-  aqiDOM.textContent=weatherData.aqi;
-  pm2_5DOM.textContent=weatherData.pm25;
-  pm10DOM.textContent=weatherData.pm10;
-  timeStampDOM.textContent=weatherData.lastUpdatedTime;
+  latDOM.textContent = data.latitude.toFixed(2);
+  lonDOM.textContent = data.longitude.toFixed(2);
+  tempDOM.textContent = data.temp;
+  tempMaxDOM.textContent = data.tempMax;
+  tempMinDOM.textContent = data.tempMin;
+  aqiDOM.textContent=data.aqi;
+  pm2_5DOM.textContent=data.pm25;
+  pm10DOM.textContent=data.pm10;
+  timeStampDOM.textContent=new Date(data.lastUpdatedTime*1000).toUTCString();
+}
+
+async function sendData(data) {
+  const options = {
+    method:'POST',
+    headers:{
+      "Content-Type": 'application/json',
+    },
+    body:JSON.stringify(data),
+  };
+  const response = await fetch('/api',options);
+  console.log(await response.json());
 }

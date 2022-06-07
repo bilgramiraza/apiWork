@@ -11,20 +11,12 @@ const database = new Datastore('database.db');
 database.loadDatabase();
 
 app.post('/api',(request, response)=>{
-  arrivalTime = Date.now();
-  let row = {
-    timeStamp:arrivalTime,
-    caption:request.body.caption,
-    lat:request.body.lat,
-    lon:request.body.lon,
-  };
-  database.insert(row);
+  let data = request.body;
+  data.timeStamp = Date.now();
+  database.insert(data);
   response.json({
     status:'success',
-    timeStamp:arrivalTime,
-    caption:request.body.caption,
-    latitude:request.body.lat,
-    longitude:request.body.lon,
+    ...data,
   });
 });
 
@@ -42,7 +34,6 @@ app.get('/api',(request, response)=>{
 app.get('/weather/:coords',openWeatherAPI);
 async function openWeatherAPI( request, response) {
   const [lat,lon] = request.params.coords.split(',');
-  //API KEY REMOVED. Add before compiling
   const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?units=metric&lat=${lat}&lon=${lon}&appid=${apiKey}`;
   const aqiUrl = `http://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${apiKey}`;
   const weatherResponse = await fetch(weatherUrl);
@@ -62,12 +53,11 @@ async function openWeatherAPI( request, response) {
     case 5:aqi = 'Very Poor';
       break;
   }
-  const lastUpdatedTime =new Date(aqiData.list[0].dt*1000).toUTCString();
   const data = {
     temp:weatherData.main.temp,
     tempMin:weatherData.main.temp_min,
     tempMax:weatherData.main.temp_max,
-    lastUpdatedTime:lastUpdatedTime,
+    lastUpdatedTime:aqiData.list[0].dt,
     aqi:aqi,
     pm25:aqiData.list[0].components.pm2_5,
     pm10:aqiData.list[0].components.pm10,
