@@ -1,9 +1,9 @@
 setup();
 
 function setup(){
-  // const reloadBtn = document.querySelector('#getData');
+  const reloadBtn = document.querySelector('#getData');
   const myMap = createWeatherMap();
-  setInterval(async ()=>{setMarkers(myMap)},5000);
+  reloadBtn.addEventListener('click',async ()=>{setMarkers(myMap)});
 }
 function createWeatherMap() {
   const myMap = L.map('weatherMap').setView([0,0], 1);
@@ -23,7 +23,6 @@ function createWeatherMap() {
 async function getData() {
   const response = await fetch('/api');
   const data = await response.json();
-  console.log(data);
   return data;
 }
 
