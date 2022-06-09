@@ -12,11 +12,6 @@ function createWeatherMap() {
   const tiles = L.tileLayer(tileURL, {attribution});
   tiles.addTo(myMap);
   myMap.setView([0,0], 2);
-  // const issIcon = L.icon({
-  //     iconUrl: 'iss.png',
-  //     iconSize: [50, 32],
-  //     iconAnchor: [25, 16],
-  // });
   return myMap;
 }
 
@@ -32,7 +27,7 @@ async function setMarkers(myMap) {
     const popupText = `Latitude:${item.latitude} Longitude:${item.longitude} \n Caption:${item.caption} \n`+
                       `Recorded Temps:\n Temp:${item.temp}&deg;C \t Avg:${item.tempMin}&deg;C/${item.tempMax}&deg;C \n`+
                       `Recorded AQI:\n Air Quality:${item.aqi} \n pm2.5:${item.pm25}μg/m3 pm10:${item.pm10}μg/m3`;
-    const marker = L.marker([item.latitude, item.longitude]/*, {icon:issIcon}*/).addTo(myMap);
+    const marker = L.marker([item.latitude, item.longitude]).addTo(myMap);
     marker.bindPopup(popupText);
   }
 }

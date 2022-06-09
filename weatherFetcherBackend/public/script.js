@@ -36,12 +36,29 @@ async function getCoords() {
 
 async function getWeatherData() {
   const position = await getCoords();
-  const weatherResponse = await fetch(`/weather/${position.latitude},${position.longitude}`);
-  const weatherData = await weatherResponse.json();
-  return {...weatherData, ...position};
+  try {
+    const weatherResponse = await fetch(`/weather/${position.latitude},${position.longitude}`);
+    const weatherData = await weatherResponse.json();
+    return {...weatherData, ...position};
+  } catch (error) {
+    alert(error);
+    return {
+      latitude:null,
+      longitude:null,
+      temp:null,
+      tempMin:null,
+      tempMax:null,
+      lastUpdatedTime:null,
+      aqi:null,
+      pm25:null,
+      pm10:null};
+  }
 }
 
 function displayData(data){
+  if(!data.latitude){
+    return;
+  }
   const latDOM = document.querySelector('.lat');
   const lonDOM = document.querySelector('.lon');
   const tempDOM = document.querySelector('.temp');
