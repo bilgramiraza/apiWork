@@ -1,6 +1,7 @@
 const express = require('express');
 const Datastore = require('nedb');
 const fetch = require('node-fetch');
+require('dotenv').config();
 
 const app = express();
 app.listen(3000,()=>console.log('listening at port 3000'));
@@ -34,6 +35,7 @@ app.get('/api',(request, response)=>{
 app.get('/weather/:coords',openWeatherAPI);
 async function openWeatherAPI( request, response) {
   const [lat,lon] = request.params.coords.split(',');
+  const apiKey = process.env.API_KEY;
   const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?units=metric&lat=${lat}&lon=${lon}&appid=${apiKey}`;
   const aqiUrl = `http://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${apiKey}`;
   const weatherResponse = await fetch(weatherUrl);
